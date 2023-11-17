@@ -1,5 +1,6 @@
 import { FunctionComponent, JSX, useState } from 'react';
 import styled from 'styled-components';
+import Calendar from './Calendar';
 
 const ComponentContainer = styled.div`
   font-family: 'Josefin Sans', sans-serif;
@@ -9,15 +10,28 @@ const ComponentContainer = styled.div`
   flex-direction: column;
   align-items: center;
   user-select: none;
+  margin: 100px 15% 0 15%;
+  width: 70%;
 `;
 const Navigation = styled.div`
   display: flex;
+  width: 100%;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 60px 0;
+  h3 {
+    font-size: 20px;
+    margin: 0 10px;
+    width: 200px;
+    text-align: center;
+  }
 `;
 const Button = styled.div`
   display: flex;
   justify-content: center;
-  padding: 5px 10px;
+  align-items: center;
+  padding: 10px 15px;
   background-color: #44C2BC;
   color: white;
   cursor: pointer;
@@ -27,20 +41,11 @@ const CalendarBody = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const CalendarHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
-const CalendarTable = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
 
 
 interface MainScreenProps {  
 }
 const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
-  const weekdays = ['Monday','Tuesday','Wednesday','Thursday', 'Friday', 'Saturday','Sunday'];
   const [currentDate, setCurrentDate] = useState(new Date());
 
 
@@ -49,18 +54,17 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   return (
     <ComponentContainer>
       <Navigation>
-        <div>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
         <Button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}>
-            Prev
+          Prev
         </Button>
+        <h3>{currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
         <Button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}>
           Next
         </Button>
       </Navigation>
       
       <CalendarBody>
-        <CalendarHeader>{weekdays.map((weekday) => { return <div>{weekday}</div>})}</CalendarHeader>
-        <CalendarTable></CalendarTable>
+        <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate}/>
       </CalendarBody>
         
     </ComponentContainer>
