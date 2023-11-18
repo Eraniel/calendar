@@ -36,6 +36,12 @@ const Button = styled.div`
   color: white;
   cursor: pointer;
 `;
+const DatePicker = styled.div`
+  display: flex;
+  input {
+    width: 80px;
+  }
+`;
 
 const CalendarBody = styled.div`
   display: flex;
@@ -47,10 +53,33 @@ interface MainScreenProps {
 }
 const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [inputDate, setInputDate] = useState({ newYear: '', newMonth: '', newDay: '' });
+
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+    if (
+      (name === 'newMonth' && /^\d+$/.test(value) && parseInt(value, 10) >= 1 && parseInt(value, 10) <= 12) ||
+      (name === 'newDay' && /^\d+$/.test(value) && parseInt(value, 10) >= 1 && parseInt(value, 10) <= 31) ||
+      (name === 'newYear' && /^\d+$/.test(value)) ||
+      (value === '')
+    ) {
+      setInputDate((prevInput) => ({ ...prevInput, [name]: value }));
+    }
+  };
+
+  const updateDate = () => {
+    const updatedDate = new Date(currentDate);
+    updatedDate.setFullYear(parseInt(inputDate.newYear, 10));
+    updatedDate.setMonth(parseInt(inputDate.newMonth, 10) - 1);
+    updatedDate.setDate(parseInt(inputDate.newDay, 10));
+    setCurrentDate(updatedDate);
+    setInputDate({ newYear: '', newMonth: '', newDay: '' });
+  };
+  const backToTheFuture = () => {
+    setCurrentDate(new Date());
+  }
 
 
-  
-    
   return (
     <ComponentContainer>
       <Navigation>
@@ -61,6 +90,13 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
         <Button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}>
           Next
         </Button>
+        <DatePicker>
+          <input type="text" name="newYear" placeholder="Year" value={inputDate.newYear} onChange={handleInputChange}/>
+          <input type="text" name="newMonth" placeholder="Month" value={inputDate.newMonth} onChange={handleInputChange}/>
+          <input type="text" name="newDay" placeholder="Day" value={inputDate.newDay} onChange={handleInputChange}/>
+          <Button onClick={updateDate}>Pick Date</Button>
+          <Button onClick={backToTheFuture}>Today</Button>
+        </DatePicker>
       </Navigation>
       
       <CalendarBody>
