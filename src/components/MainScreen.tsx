@@ -54,6 +54,7 @@ interface MainScreenProps {
 const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [inputDate, setInputDate] = useState({ newYear: '', newMonth: '', newDay: '' });
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
@@ -77,6 +78,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   };
   const backToTheFuture = () => {
     setCurrentDate(new Date());
+    
   }
 
 
@@ -100,7 +102,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
       </Navigation>
       
       <CalendarBody>
-        <Calendar currentDate={currentDate} setCurrentDate={setCurrentDate}/>
+        <Calendar selectedDay={selectedDay} setSelectedDay={setSelectedDay} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
       </CalendarBody>
         
     </ComponentContainer>

@@ -1,12 +1,18 @@
-import { FunctionComponent, JSX } from 'react';
+import { Dispatch, FunctionComponent, JSX, SetStateAction, useState } from 'react';
 import styled from 'styled-components';
+import EventForm from './EventForm';
+import { Event } from '../interfaces';
+
+const ComponentContainer = styled.div`
+  display: flex;
+`;
 
 const CalendarContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 `;
 
-const DayCell = styled.div<{ isCurrentMonth?: boolean }>`
+const DayCell = styled.div<{ isCurrentMonth?: boolean, isSelected: boolean }>`
   border: 1px solid #ccc;
   width: 120px;
   height: 120px;
@@ -14,6 +20,7 @@ const DayCell = styled.div<{ isCurrentMonth?: boolean }>`
   flex-direction: column;
   background-color: ${(props) => (props.isCurrentMonth ? 'white' : '#f5f5f5')};
   color: ${(props) => (props.isCurrentMonth ? '#28292C' : '#ccc')};
+  border: ${(props) => (props.isSelected ? '1px solid #44C2BC' : '1px solid #ccc')};
 `;
 const DateInfo = styled.div<{ isToday?: boolean, isCurrentMonth?: boolean }>`
   display: flex;
@@ -35,8 +42,14 @@ const DateEvents = styled.div`
 interface CalendarProps {
   currentDate: Date;
   setCurrentDate: (date:Date) => void;
+  selectedDay: number | null;
+  setSelectedDay: Dispatch<SetStateAction<number | null>>;
 }
-const Calendar: FunctionComponent<CalendarProps> = ({ currentDate, setCurrentDate } : CalendarProps): JSX.Element => {
+
+const Calendar: FunctionComponent<CalendarProps> = ({ selectedDay, setSelectedDay, currentDate, setCurrentDate } : CalendarProps): JSX.Element => {
+  
+  const [savedEventsByDay, setSavedEventsByDay] = useState<{ [day: number]: Array<Event> }>({});
+  
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
   const weekdayOfFirstDay = firstDayOfMonth.getDay();
@@ -49,6 +62,11 @@ const Calendar: FunctionComponent<CalendarProps> = ({ currentDate, setCurrentDat
       return daysOfWeek[dayOfWeek];
     }
   }
+
+  const handleDayClick = (day: number) => {
+    setSelectedDay(day);
+  };
+
   for (let day = 0; day < 42; day++) {
     let currentDay = new Date(firstDayOfMonth);
     currentDay.setDate(firstDayOfMonth.getDate() + day - startDay);
@@ -56,21 +74,23 @@ const Calendar: FunctionComponent<CalendarProps> = ({ currentDate, setCurrentDat
     const isCurrentMonth = currentDay >= firstDayOfMonth && currentDay <= lastDayOfMonth;
     const dayOfWeekName = getDayOfWeekName(currentDay.getDay());
     const isToday = currentDay.toDateString() === new Date().toDateString();
+    const isSelected = selectedDay === currentDay.getDate();
   
     currentDays.push(
-      <DayCell key={day} isCurrentMonth={isCurrentMonth}>
+      <DayCell key={day} isCurrentMonth={isCurrentMonth} isSelected={isSelected} onClick={() => handleDayClick(currentDay.getDate())}>
         <DateInfo isCurrentMonth={isCurrentMonth} isToday={isToday}><b>{currentDay.getDate()}</b> {dayOfWeekName} {isToday && "Today"}</DateInfo>
         <DateEvents>
-            <div>Event</div>
-            <div>Event</div>
-            <div>Event</div>
+          {savedEventsByDay[currentDay.getDate()]?.map((savedEvent)=>{return <div>{savedEvent.title}</div>})}
         </DateEvents>
       </DayCell>
     );
   }
 
   return (
-    <CalendarContainer>{currentDays}</CalendarContainer>
+    <ComponentContainer>
+      <EventForm selectedDay={selectedDay} setSavedEventsByDay={setSavedEventsByDay}/>
+      <CalendarContainer>{currentDays}</CalendarContainer>
+    </ComponentContainer>
   );
 };
 
