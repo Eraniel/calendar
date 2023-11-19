@@ -1,4 +1,4 @@
-import { FunctionComponent, JSX, useState } from 'react';
+import { FunctionComponent, JSX, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Calendar from './Calendar';
 
@@ -36,6 +36,9 @@ const Button = styled.div`
   color: white;
   cursor: pointer;
 `;
+const ButtonPickDate = styled(Button)<{ isDateProperlySelected?: boolean }>`
+  background-color: ${(props) => (props.isDateProperlySelected ? '#44C2BC' : '#db3a2e')};
+`;
 
 const DatePicker = styled.div`
   display: flex;
@@ -56,7 +59,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [inputDate, setInputDate] = useState({ newYear: '', newMonth: '', newDay: '' });
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-  
+  const [isDateProperlySelected, setIsDateProperlySelected] = useState(false);
 
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
@@ -69,16 +72,24 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
     ) {
       setInputDate((prevInput) => ({ ...prevInput, [name]: value }));
     }
+
   };
 
+  useEffect(() => {
+    const isAllFieldsFilled = inputDate.newYear !== '' && inputDate.newMonth !== '' && inputDate.newDay !== '';
+    setIsDateProperlySelected(isAllFieldsFilled);
+  }, [inputDate]);
+
   const updateDate = () => {
-    const updatedDate = new Date(currentDate);
-    updatedDate.setFullYear(parseInt(inputDate.newYear, 10));
-    updatedDate.setMonth(parseInt(inputDate.newMonth, 10) - 1);
-    updatedDate.setDate(parseInt(inputDate.newDay, 10));
-    setCurrentDate(updatedDate);
-    setSelectedDate(updatedDate);
-    setInputDate({ newYear: '', newMonth: '', newDay: '' });
+    if (isDateProperlySelected) {
+      const updatedDate = new Date(currentDate);
+      updatedDate.setFullYear(parseInt(inputDate.newYear, 10));
+      updatedDate.setMonth(parseInt(inputDate.newMonth, 10) - 1);
+      updatedDate.setDate(parseInt(inputDate.newDay, 10));
+      setCurrentDate(updatedDate);
+      setSelectedDate(updatedDate);
+      setInputDate({ newYear: '', newMonth: '', newDay: '' });
+    }
   };
   const backToTheFuture = () => {
     setCurrentDate(new Date());
@@ -100,7 +111,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
           <input type="text" name="newYear" placeholder="Year" value={inputDate.newYear} onChange={handleInputChange}/>
           <input type="text" name="newMonth" placeholder="Month" value={inputDate.newMonth} onChange={handleInputChange}/>
           <input type="text" name="newDay" placeholder="Day" value={inputDate.newDay} onChange={handleInputChange}/>
-          <Button onClick={updateDate}>Pick Date</Button>
+          <ButtonPickDate isDateProperlySelected={isDateProperlySelected} onClick={updateDate}>Pick Date</ButtonPickDate>
           <Button onClick={backToTheFuture}>Today</Button>
         </DatePicker>
       </Navigation>
