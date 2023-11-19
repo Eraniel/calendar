@@ -10,8 +10,10 @@ const ComponentContainer = styled.div`
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  height: 744px;
+  padding: 0 20px;
 `;
-
 const CalendarContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -19,11 +21,11 @@ const CalendarContainer = styled.div`
 
 const DayCell = styled.div<{ isCurrentMonth?: boolean, isSelected: boolean }>`
   cursor:pointer;
-  width: 120px;
+  width: 130px;
   height: 120px;
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => (props.isCurrentMonth ? 'white' : '#f5f5f5')};
+  background-color: ${(props) => (props.isSelected && props.isCurrentMonth ? '#defcfa' : props.isCurrentMonth ? 'white' : '#f5f5f5')};
   color: ${(props) => (props.isCurrentMonth ? '#28292C' : '#ccc')};
   border: ${(props) => (props.isSelected ? '2px solid #44C2BC' : '2px solid #ccc')};
 `;
@@ -38,12 +40,10 @@ const DateInfo = styled.div<{ isToday?: boolean, isCurrentMonth?: boolean }>`
     margin: 0 10px 0 0;
   }
 `;
-const DateEvents = styled.div<{ isCurrentMonth?: boolean, isSelected: boolean }>`
+const DateEvents = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
   overflow-y: auto;
-  background-color: ${(props) => (props.isSelected && '#defcfa')};
 `;
 const DateEvent = styled.div`
   display: flex;
@@ -95,7 +95,7 @@ const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedD
     currentDays.push(
       <DayCell key={day} isCurrentMonth={isCurrentMonth} isSelected={isSelected} onClick={() => handleDayClick(currentDay)}>
         <DateInfo isCurrentMonth={isCurrentMonth} isToday={isToday}><b>{currentDay.getDate()}</b> {dayOfWeekName} {isToday && "Today"}</DateInfo>
-        <DateEvents isSelected={isSelected}>
+        <DateEvents>
           {savedEventsByDate[currentDateKey]?.map((savedEvent: Event, index: number) => (<DateEvent key={`${currentDay.toDateString()}-${index}`}>{savedEvent.title}</DateEvent>))}
         </DateEvents>
       </DayCell>

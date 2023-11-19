@@ -17,7 +17,7 @@ const Navigation = styled.div`
   display: flex;
   width: 100%;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin: 0 0 60px 0;
   h3 {
@@ -26,6 +26,10 @@ const Navigation = styled.div`
     width: 200px;
     text-align: center;
   }
+`;
+const Buttons = styled.div`
+  display: flex;
+  align-items: center;
 `;
 const Button = styled.div`
   display: flex;
@@ -36,8 +40,9 @@ const Button = styled.div`
   color: white;
   cursor: pointer;
 `;
-const ButtonPickDate = styled(Button)<{ isDateProperlySelected?: boolean }>`
+const PickDateBtn = styled(Button)<{ isDateProperlySelected?: boolean }>`
   background-color: ${(props) => (props.isDateProperlySelected ? '#44C2BC' : '#db3a2e')};
+  margin: 0 10px 0 0;
 `;
 
 const DatePicker = styled.div`
@@ -98,6 +103,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   return (
     <ComponentContainer>
       <Navigation>
+        <Buttons>
         <Button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))}>
           Prev
         </Button>
@@ -105,11 +111,12 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
         <Button onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))}>
           Next
         </Button>
+        </Buttons>
         <DatePicker>
-          <input type="text" name="newYear" placeholder="Year" value={inputDate.newYear} onChange={handleInputChange}/>
-          <input type="text" name="newMonth" placeholder="Month" value={inputDate.newMonth} onChange={handleInputChange}/>
-          <input type="text" name="newDay" placeholder="Day" value={inputDate.newDay} onChange={handleInputChange}/>
-          <ButtonPickDate isDateProperlySelected={isDateProperlySelected} onClick={updateDate}>Pick Date</ButtonPickDate>
+          <input type="text" name="newYear" placeholder="Year*" value={inputDate.newYear} onChange={handleInputChange}/>
+          <input type="text" name="newMonth" placeholder="Month*" value={inputDate.newMonth} onChange={handleInputChange}/>
+          <input type="text" name="newDay" placeholder="Day*" value={inputDate.newDay} onChange={handleInputChange}/>
+          <PickDateBtn isDateProperlySelected={isDateProperlySelected} onClick={updateDate}>Pick Date</PickDateBtn>
           <Button onClick={backToTheFuture}>Today</Button>
         </DatePicker>
       </Navigation>
@@ -117,7 +124,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
       <CalendarBody>
         <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
       </CalendarBody>
-        
+    <h2>Calendar App by Bohdan Pantiley</h2>
     </ComponentContainer>
   );
 };
