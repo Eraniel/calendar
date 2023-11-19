@@ -3,3 +3,7 @@ export interface Event {
     description: any;
     time: any;
 }
+
+export interface SavedEventsByDate {
+    [date: string]: Array<Event>;
+}

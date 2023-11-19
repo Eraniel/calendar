@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, JSX, SetStateAction, useState } from 'react';
 import styled from 'styled-components';
-import { Event } from '../interfaces';
+import { SavedEventsByDate } from '../interfaces';
 
 const EventFormContainer = styled.div`
 
@@ -15,12 +15,11 @@ const Button = styled.div`
   cursor: pointer;
 `;
 
-
 interface EventFormProps {
-  selectedDay: number | null;
-  setSavedEventsByDay: Dispatch<SetStateAction<{ [day: number]: Event[]; }>>;
+  selectedDate: Date | null;
+  setSavedEventsByDate: Dispatch<SetStateAction<SavedEventsByDate>>;
 }
-const EventForm: FunctionComponent<EventFormProps> = ({ selectedDay, setSavedEventsByDay } : EventFormProps): JSX.Element => {
+const EventForm: FunctionComponent<EventFormProps> = ({ selectedDate, setSavedEventsByDate } : EventFormProps): JSX.Element => {
   const [inputData, setInputData] = useState({ title: '', description: '', time: '' });
   
 
@@ -28,13 +27,14 @@ const EventForm: FunctionComponent<EventFormProps> = ({ selectedDay, setSavedEve
     const { name, value } = e.target;
     setInputData((prevInput) => ( {...prevInput, [name]: value} ));
   };
-
+  const currentDayKey = selectedDate ? `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}` : '';
   const saveEvent = () => {
-    setSavedEventsByDay((prevSavedEvents) => {
-      const updatedEvents = { ...prevSavedEvents };
-      const currentDayKey = selectedDay !== null ? selectedDay : 0;
+    setSavedEventsByDate((prevSavedEvents) => {
+      
+      const updatedEvents: SavedEventsByDate = { ...prevSavedEvents };
       const currentDayEvents = updatedEvents[currentDayKey] || [];
       updatedEvents[currentDayKey] = [...currentDayEvents, inputData];
+      console.log(updatedEvents);
       return updatedEvents;
     });
     setInputData({ title: '', description: '', time: '' });
@@ -46,6 +46,7 @@ const EventForm: FunctionComponent<EventFormProps> = ({ selectedDay, setSavedEve
       <input type="text" name="title" placeholder="Title" value={inputData.title} onChange={handleInputChange}/>
       <input type="text" name="description" placeholder="Description" value={inputData.description} onChange={handleInputChange}/>
       <input type="text" name="time" placeholder="set Time: --:--" value={inputData.time} onChange={handleInputChange}/>
+      <div>Date is: {currentDayKey}</div>
       <Button onClick={saveEvent}>Save Event</Button>
     </EventFormContainer>
   );

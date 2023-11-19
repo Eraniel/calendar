@@ -1,7 +1,7 @@
 import { Dispatch, FunctionComponent, JSX, SetStateAction, useState } from 'react';
 import styled from 'styled-components';
 import EventForm from './EventForm';
-import { Event } from '../interfaces';
+import { Event, SavedEventsByDate } from '../interfaces';
 
 const ComponentContainer = styled.div`
   display: flex;
@@ -13,14 +13,14 @@ const CalendarContainer = styled.div`
 `;
 
 const DayCell = styled.div<{ isCurrentMonth?: boolean, isSelected: boolean }>`
-  border: 1px solid #ccc;
+  cursor:pointer;
   width: 120px;
   height: 120px;
   display: flex;
   flex-direction: column;
   background-color: ${(props) => (props.isCurrentMonth ? 'white' : '#f5f5f5')};
   color: ${(props) => (props.isCurrentMonth ? '#28292C' : '#ccc')};
-  border: ${(props) => (props.isSelected ? '1px solid #44C2BC' : '1px solid #ccc')};
+  border: ${(props) => (props.isSelected ? '2px solid #44C2BC' : '2px solid #ccc')};
 `;
 const DateInfo = styled.div<{ isToday?: boolean, isCurrentMonth?: boolean }>`
   display: flex;
@@ -33,22 +33,32 @@ const DateInfo = styled.div<{ isToday?: boolean, isCurrentMonth?: boolean }>`
     margin: 0 10px 0 0;
   }
 `;
-const DateEvents = styled.div`
+const DateEvents = styled.div<{ isCurrentMonth?: boolean, isSelected: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
+  background-color: ${(props) => (props.isSelected && '#defcfa')};
 `;
+const DateEvent = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background-color: #f5f5f5;
+  margin: 0 0 5px 0;
+`;
+
 
 interface CalendarProps {
   currentDate: Date;
   setCurrentDate: (date:Date) => void;
-  selectedDay: number | null;
-  setSelectedDay: Dispatch<SetStateAction<number | null>>;
+  selectedDate: Date | null;
+  setSelectedDate: Dispatch<SetStateAction<Date | null>>;
 }
 
-const Calendar: FunctionComponent<CalendarProps> = ({ selectedDay, setSelectedDay, currentDate, setCurrentDate } : CalendarProps): JSX.Element => {
+const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedDate, currentDate, setCurrentDate } : CalendarProps): JSX.Element => {
   
-  const [savedEventsByDay, setSavedEventsByDay] = useState<{ [day: number]: Array<Event> }>({});
+  const [savedEventsByDate, setSavedEventsByDate] = useState<SavedEventsByDate>({});
   
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -63,24 +73,25 @@ const Calendar: FunctionComponent<CalendarProps> = ({ selectedDay, setSelectedDa
     }
   }
 
-  const handleDayClick = (day: number) => {
-    setSelectedDay(day);
+  const handleDayClick = (date: Date) => {
+    setSelectedDate(date);
   };
 
   for (let day = 0; day < 42; day++) {
     let currentDay = new Date(firstDayOfMonth);
     currentDay.setDate(firstDayOfMonth.getDate() + day - startDay);
-  
     const isCurrentMonth = currentDay >= firstDayOfMonth && currentDay <= lastDayOfMonth;
     const dayOfWeekName = getDayOfWeekName(currentDay.getDay());
     const isToday = currentDay.toDateString() === new Date().toDateString();
-    const isSelected = selectedDay === currentDay.getDate();
+    const isSelected = selectedDate ? selectedDate.toDateString() === currentDay.toDateString() : false;
+
+    const currentDateKey = currentDay ? `${currentDay.getFullYear()}-${currentDay.getMonth() + 1}-${currentDay.getDate()}` : '';
   
     currentDays.push(
-      <DayCell key={day} isCurrentMonth={isCurrentMonth} isSelected={isSelected} onClick={() => handleDayClick(currentDay.getDate())}>
+      <DayCell key={day} isCurrentMonth={isCurrentMonth} isSelected={isSelected} onClick={() => handleDayClick(currentDay)}>
         <DateInfo isCurrentMonth={isCurrentMonth} isToday={isToday}><b>{currentDay.getDate()}</b> {dayOfWeekName} {isToday && "Today"}</DateInfo>
-        <DateEvents>
-          {savedEventsByDay[currentDay.getDate()]?.map((savedEvent)=>{return <div>{savedEvent.title}</div>})}
+        <DateEvents isSelected={isSelected}>
+          {savedEventsByDate[currentDateKey]?.map((savedEvent: Event, index: number) => (<DateEvent key={`${currentDay.toDateString()}-${index}`}>{savedEvent.title}</DateEvent>))}
         </DateEvents>
       </DayCell>
     );
@@ -88,7 +99,7 @@ const Calendar: FunctionComponent<CalendarProps> = ({ selectedDay, setSelectedDa
 
   return (
     <ComponentContainer>
-      <EventForm selectedDay={selectedDay} setSavedEventsByDay={setSavedEventsByDay}/>
+      <EventForm selectedDate={selectedDate} setSavedEventsByDate={setSavedEventsByDate}/>
       <CalendarContainer>{currentDays}</CalendarContainer>
     </ComponentContainer>
   );

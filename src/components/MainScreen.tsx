@@ -36,6 +36,7 @@ const Button = styled.div`
   color: white;
   cursor: pointer;
 `;
+
 const DatePicker = styled.div`
   display: flex;
   input {
@@ -54,10 +55,12 @@ interface MainScreenProps {
 const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [inputDate, setInputDate] = useState({ newYear: '', newMonth: '', newDay: '' });
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  
 
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
+
     if (
       (name === 'newMonth' && /^\d+$/.test(value) && parseInt(value, 10) >= 1 && parseInt(value, 10) <= 12) ||
       (name === 'newDay' && /^\d+$/.test(value) && parseInt(value, 10) >= 1 && parseInt(value, 10) <= 31) ||
@@ -74,11 +77,12 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
     updatedDate.setMonth(parseInt(inputDate.newMonth, 10) - 1);
     updatedDate.setDate(parseInt(inputDate.newDay, 10));
     setCurrentDate(updatedDate);
+    setSelectedDate(updatedDate);
     setInputDate({ newYear: '', newMonth: '', newDay: '' });
   };
   const backToTheFuture = () => {
     setCurrentDate(new Date());
-    
+    setSelectedDate(new Date());
   }
 
 
@@ -102,7 +106,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
       </Navigation>
       
       <CalendarBody>
-        <Calendar selectedDay={selectedDay} setSelectedDay={setSelectedDay} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
+        <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
       </CalendarBody>
         
     </ComponentContainer>
