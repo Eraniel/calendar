@@ -58,12 +58,11 @@ interface MainScreenProps {
 const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [inputDate, setInputDate] = useState({ newYear: '', newMonth: '', newDay: '' });
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDateProperlySelected, setIsDateProperlySelected] = useState(false);
 
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
-
     if (
       (name === 'newMonth' && /^\d+$/.test(value) && parseInt(value, 10) >= 1 && parseInt(value, 10) <= 12) ||
       (name === 'newDay' && /^\d+$/.test(value) && parseInt(value, 10) >= 1 && parseInt(value, 10) <= 31) ||
@@ -72,7 +71,6 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
     ) {
       setInputDate((prevInput) => ({ ...prevInput, [name]: value }));
     }
-
   };
 
   useEffect(() => {

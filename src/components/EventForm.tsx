@@ -21,7 +21,6 @@ interface EventFormProps {
 }
 const EventForm: FunctionComponent<EventFormProps> = ({ selectedDate, setSavedEventsByDate } : EventFormProps): JSX.Element => {
   const [inputData, setInputData] = useState({ title: '', description: '', time: '' });
-  
 
   const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
@@ -29,12 +28,10 @@ const EventForm: FunctionComponent<EventFormProps> = ({ selectedDate, setSavedEv
   };
   const currentDayKey = selectedDate ? `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1}-${selectedDate.getDate()}` : '';
   const saveEvent = () => {
-    setSavedEventsByDate((prevSavedEvents) => {
-      
+    setSavedEventsByDate((prevSavedEvents) => {  
       const updatedEvents: SavedEventsByDate = { ...prevSavedEvents };
       const currentDayEvents = updatedEvents[currentDayKey] || [];
       updatedEvents[currentDayKey] = [...currentDayEvents, inputData];
-      console.log(updatedEvents);
       return updatedEvents;
     });
     setInputData({ title: '', description: '', time: '' });
@@ -46,7 +43,7 @@ const EventForm: FunctionComponent<EventFormProps> = ({ selectedDate, setSavedEv
       <input type="text" name="title" placeholder="Title" value={inputData.title} onChange={handleInputChange}/>
       <input type="text" name="description" placeholder="Description" value={inputData.description} onChange={handleInputChange}/>
       <input type="text" name="time" placeholder="set Time: --:--" value={inputData.time} onChange={handleInputChange}/>
-      <div>Date is: {currentDayKey}</div>
+      <div>Date of event is:<br/> <b>{currentDayKey}</b></div>
       <Button onClick={saveEvent}>Save Event</Button>
     </EventFormContainer>
   );

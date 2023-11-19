@@ -1,10 +1,15 @@
 import { Dispatch, FunctionComponent, JSX, SetStateAction, useState } from 'react';
 import styled from 'styled-components';
 import EventForm from './EventForm';
+import EventsList from './EventsList';
 import { Event, SavedEventsByDate } from '../interfaces';
 
 const ComponentContainer = styled.div`
   display: flex;
+`;
+const Wrap = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const CalendarContainer = styled.div`
@@ -52,8 +57,8 @@ const DateEvent = styled.div`
 interface CalendarProps {
   currentDate: Date;
   setCurrentDate: (date:Date) => void;
-  selectedDate: Date | null;
-  setSelectedDate: Dispatch<SetStateAction<Date | null>>;
+  selectedDate: Date;
+  setSelectedDate: Dispatch<SetStateAction<Date>>;
 }
 
 const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedDate, currentDate, setCurrentDate } : CalendarProps): JSX.Element => {
@@ -99,7 +104,10 @@ const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedD
 
   return (
     <ComponentContainer>
-      <EventForm selectedDate={selectedDate} setSavedEventsByDate={setSavedEventsByDate}/>
+      <Wrap>
+        <EventForm selectedDate={selectedDate} setSavedEventsByDate={setSavedEventsByDate} />
+        <EventsList selectedDate={selectedDate} savedEventsByDate={savedEventsByDate} setSavedEventsByDate={setSavedEventsByDate} />
+      </Wrap>
       <CalendarContainer>{currentDays}</CalendarContainer>
     </ComponentContainer>
   );
