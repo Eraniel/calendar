@@ -122,7 +122,7 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
       </Navigation>
       
       <CalendarBody>
-        <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} currentDate={currentDate} setCurrentDate={setCurrentDate}/>
+        <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} currentDate={currentDate} />
       </CalendarBody>
     <h2>Calendar App by Bohdan Pantiley</h2>
     </ComponentContainer>

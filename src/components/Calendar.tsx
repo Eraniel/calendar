@@ -1,4 +1,4 @@
-import { Dispatch, FunctionComponent, JSX, SetStateAction, useState } from 'react';
+import { Dispatch, FunctionComponent, JSX, SetStateAction, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import EventForm from './EventForm';
 import EventsList from './EventsList';
@@ -56,15 +56,41 @@ const DateEvent = styled.div`
 
 interface CalendarProps {
   currentDate: Date;
-  setCurrentDate: (date:Date) => void;
   selectedDate: Date;
   setSelectedDate: Dispatch<SetStateAction<Date>>;
 }
 
-const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedDate, currentDate, setCurrentDate } : CalendarProps): JSX.Element => {
-  
-  const [savedEventsByDate, setSavedEventsByDate] = useState<SavedEventsByDate>({});
-  
+const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedDate, currentDate } : CalendarProps): JSX.Element => {
+  //POST
+  const saveToLocalStorage = (key: string, data: any) => {
+    const storedData = loadFromLocalStorage('CalendarAppData') || {};
+    storedData[key] = data;
+    localStorage.setItem('CalendarAppData', JSON.stringify(storedData));
+  };
+  //GET
+  const loadFromLocalStorage = (key: string) => {
+    const storedData = localStorage.getItem('CalendarAppData');
+    return storedData ? JSON.parse(storedData)[key] : null;
+  };
+  //PUT
+  const updateInLocalStorage = (key: string, updatedData: any) => {
+    const storedData = loadFromLocalStorage('CalendarAppData') || {};
+    storedData[key] = { ...storedData[key], ...updatedData };
+    localStorage.setItem('CalendarAppData', JSON.stringify(storedData));
+  };
+  //DELETE
+  const deleteFromLocalStorage = (key: string) => {
+    const storedData = loadFromLocalStorage('CalendarAppData') || {};
+    delete storedData[key];
+    localStorage.setItem('CalendarAppData', JSON.stringify(storedData));
+  };
+  const [savedEventsByDate, setSavedEventsByDate] = useState<SavedEventsByDate>(loadFromLocalStorage('savedEvents') || {});
+  useEffect(() => {
+    saveToLocalStorage('savedEvents', savedEventsByDate);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedEventsByDate]);
+
+
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
   const weekdayOfFirstDay = firstDayOfMonth.getDay();
