@@ -26,10 +26,16 @@ const Navigation = styled.div`
     width: 200px;
     text-align: center;
   }
+  @media (max-width: 1200px) {
+    flex-direction: column;
+  }
 `;
 const Buttons = styled.div`
   display: flex;
   align-items: center;
+  @media (max-width: 1200px) {
+    margin: 0 0 20px 0;
+  }
 `;
 const Button = styled.div`
   display: flex;
@@ -41,7 +47,7 @@ const Button = styled.div`
   cursor: pointer;
 `;
 const PickDateBtn = styled(Button)<{ isDateProperlySelected?: boolean }>`
-  background-color: ${(props) => (props.isDateProperlySelected ? '#44C2BC' : '#db3a2e')};
+  background-color: ${(props) => (props.isDateProperlySelected ? '#44C2BC' : '#a1c9c8')};
   margin: 0 10px 0 0;
 `;
 
@@ -50,11 +56,6 @@ const DatePicker = styled.div`
   input {
     width: 80px;
   }
-`;
-
-const CalendarBody = styled.div`
-  display: flex;
-  flex-direction: column;
 `;
 
 
@@ -86,12 +87,17 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
   const updateDate = () => {
     if (isDateProperlySelected) {
       const updatedDate = new Date(currentDate);
-      updatedDate.setFullYear(parseInt(inputDate.newYear, 10));
-      updatedDate.setMonth(parseInt(inputDate.newMonth, 10) - 1);
-      updatedDate.setDate(parseInt(inputDate.newDay, 10));
-      setCurrentDate(updatedDate);
-      setSelectedDate(updatedDate);
-      setInputDate({ newYear: '', newMonth: '', newDay: '' });
+      const newYear = parseInt(inputDate.newYear, 10);
+      if (newYear >= 100) {
+        updatedDate.setFullYear(newYear);
+        updatedDate.setMonth(parseInt(inputDate.newMonth, 10) - 1);
+        updatedDate.setDate(parseInt(inputDate.newDay, 10));
+        setCurrentDate(updatedDate);
+        setSelectedDate(updatedDate);
+        setInputDate({ newYear: '', newMonth: '', newDay: '' });
+      } else {
+        alert('Year cannot be less then 100!');
+      }
     }
   };
   const backToTheFuture = () => {
@@ -120,10 +126,8 @@ const MainScreen: FunctionComponent<MainScreenProps> = (): JSX.Element => {
           <Button onClick={backToTheFuture}>Today</Button>
         </DatePicker>
       </Navigation>
-      
-      <CalendarBody>
-        <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} currentDate={currentDate} />
-      </CalendarBody>
+
+      <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} currentDate={currentDate} />  
     <h2>Calendar App by Bohdan Pantiley</h2>
     </ComponentContainer>
   );

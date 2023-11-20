@@ -86,7 +86,7 @@ const EventsList: FunctionComponent<EventsListProps> = ({ selectedDate, savedEve
         <>
           <h3>{savedEvent.title}</h3>
           <h4>{savedEvent.description}</h4>
-          <h5>Was saved at:<br/> {savedEvent.time}</h5>
+          <h5>Saved at:<br/> {savedEvent.time}</h5>
           <EditButton onClick={() => setEditIndex(index)}>Edit</EditButton>
           <DeleteButton onClick={() => handleDeleteEvent(index)}>DELETE</DeleteButton>
         </>

@@ -28,6 +28,10 @@ const DayCell = styled.div<{ isCurrentMonth?: boolean, isSelected: boolean }>`
   background-color: ${(props) => (props.isSelected && props.isCurrentMonth ? '#defcfa' : props.isCurrentMonth ? 'white' : '#f5f5f5')};
   color: ${(props) => (props.isCurrentMonth ? '#28292C' : '#ccc')};
   border: ${(props) => (props.isSelected ? '2px solid #44C2BC' : '2px solid #ccc')};
+  @media (max-width: 1200px) {
+    width: 100px;
+  
+  }
 `;
 const DateInfo = styled.div<{ isToday?: boolean, isCurrentMonth?: boolean }>`
   display: flex;
@@ -94,7 +98,7 @@ const Calendar: FunctionComponent<CalendarProps> = ({ selectedDate, setSelectedD
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
   const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
   const weekdayOfFirstDay = firstDayOfMonth.getDay();
-  const startDay = (weekdayOfFirstDay - 1 + 7) % 7;//start week from Monday
+  const startDay = (weekdayOfFirstDay - 1 + 7) % 7;//Monday
   let currentDays = [];
 
   function getDayOfWeekName(dayOfWeek: number) {
